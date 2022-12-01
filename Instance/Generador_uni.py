@@ -121,6 +121,18 @@ def get_uni():
                 file.write(" "+str(dimension_box[i][j])+" "+str(orientacion_box[i][j]));
             file.write(" "+str(cantidad_box_type[i])+"\n");
        
+    #DataLog
+    logfile = "Instance/DataInstance/instance.txt";
 
+    #abre el archivo para guardarlo
+    with open(logfile, 'a') as logfile:
+        logfile.write(str(n)+"\n");
+        for i in range(n):
+            logfile.write(str(i+1))
+            
+            for j in range(3):
+                logfile.write(" "+str(dimension_box[i][j])+" "+str(orientacion_box[i][j]));
+            logfile.write(" "+str(cantidad_box_type[i])+"\n"); 
+        logfile.write("\n")  
 
     return (dimension_box, cantidad_box_type,n,cantidad_box_type,tc,volumen_cargo)
