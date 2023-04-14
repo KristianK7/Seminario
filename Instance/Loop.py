@@ -34,7 +34,7 @@ def main():
             if azar == 4: 
                 porcentaje = '120'
                 tipo = 'Normal '
-            print("Iteracion: "+str(i+1)+", "+tipo)
+            print("Iteracion: "+str(i+1)+", "+tipo+", "+porcentaje)
 
 
             comand= python+RutaInstance+"--t "+tipo+" --p "+porcentaje+" --i "+str(i+1)+" --n "+str(args.n)
