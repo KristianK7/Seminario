@@ -29,10 +29,10 @@ def main():
     p_op = 0.04
 
 
-    alpha = [0,8]
-    beta = [0,8]
-    gamma = [0,2]
-    p = [0,1]
+    alpha = [0,80]
+    beta = [0,80]
+    gamma = [0,20]
+    p = [0,10]
     print(args.t+" "+str(args.p)+"%")
     if args.t == 'Uniforme':
         if args.p == 120:
