@@ -8,11 +8,15 @@ import Out_BSG as OBSG
 import Generador_norm as N
 import Generador_uni as U
 import Generador_uni_120 as U12
+from datetime import datetime
 
+now = datetime.now()
 
 parser = ap.ArgumentParser()
-parser.add_argument('--t', type=str, default= 'uniforme', help='Tipo de distribucion')
+parser.add_argument('--t', type=str, default= 'Uniforme', help='Tipo de distribucion')
 parser.add_argument('--p', type=int, default=100, help='porcentaje de carga container')
+parser.add_argument('--i', type=int, default=1, help='Iteracion')
+parser.add_argument('--n', type=int, default= 1, help='Numero de proceso')
 args = parser.parse_args()
 
 
@@ -30,22 +34,32 @@ def main():
     gamma = [0,20]
     p = [0,10]
     print(args.t+" "+str(args.p)+"%")
-    if args.t == 'uniforme':
+    if args.t == 'Uniforme':
         if args.p == 120:
-            dimension_box, cantidad_box_type, n_tipes_box, n_box, v_contenedor, v_carga  = U12.get_uni_prus()
+            dimension_box, cantidad_box_type, n_tipes_box, n_box, v_contenedor, v_carga,l,h,w  = U12.get_uni_prus(str(args.n))
         else:
-            dimension_box, cantidad_box_type, n_tipes_box, n_box, v_contenedor, v_carga = U.get_uni()
-    elif args.t == 'normal':
+            dimension_box, cantidad_box_type, n_tipes_box, n_box, v_contenedor, v_carga,l,h,w = U.get_uni(str(args.n))
+    elif args.t == 'Normal':
         if args.p == 120:
-            dimension_box, cantidad_box_type, n_tipes_box, n_box, v_contenedor, v_carga = N12.get_norm_prus()
+            dimension_box, cantidad_box_type, n_tipes_box, n_box, v_contenedor, v_carga,l,h,w = N12.get_norm_prus(str(args.n))
         else:
-            dimension_box, cantidad_box_type, n_tipes_box, n_box, v_contenedor, v_carga = N.get_norm()
+            dimension_box, cantidad_box_type, n_tipes_box, n_box, v_contenedor, v_carga,l,h,w = N.get_norm(str(args.n))
 
     print("tipos de cajas:")
     print(n_tipes_box)
     op = OBSG.get_optimo(alpha_op, beta_op, gamma_op,p_op)
     print("optimo paper es: "+op)
+    if float(op) < 75:
+        comand= "cp Instance/instance.txt Instance/Error/Error_"+str(args.i)+"_"+str(args.n)+".txt"
+        out = subprocess.getoutput(comand)
+        
+        archivo_log= "Instance/LOG_BSG.txt";
+        with open(archivo_log, 'a') as file:
+            file.write(
+                str(now)+', Error proceso '+str(args.n)+', iteracion'+str(args.i)+"\n");
 
+        
+        
     
     #busqueda de el mejor p
     best = 0.0
@@ -56,7 +70,7 @@ def main():
         if float(optimizacion) > best:
             best = float(optimizacion)
             best_p = i/100
-            print("nuevo best = "+str(best)+"% with p"+str(best_p))
+            print("nuevo best = "+str(best)+"% with p = "+str(best_p))
  
     #busqueda de el mejor gamma
     best = 0.0
@@ -67,7 +81,7 @@ def main():
         if float(optimizacion) > best:
             best = float(optimizacion)
             best_gamma = i/10
-            print("nuevo best = "+str(best)+"% with gamma"+str(best_gamma))
+            print("nuevo best = "+str(best)+"% with gamma = "+str(best_gamma))
    
     #busqueda de el mejor beta
     best=0.0
@@ -78,7 +92,7 @@ def main():
         if float(optimizacion) > best:
             best = float(optimizacion)
             best_beta = i/10
-            print("nuevo best = "+str(best)+"% with beta"+str(best_beta))
+            print("nuevo best = "+str(best)+"% with beta = "+str(best_beta))
 
     #busca el mejor alpha
     best = 0.0
@@ -89,10 +103,17 @@ def main():
         if float(optimizacion) > best:
             best = float(optimizacion)
             best_alpha = i/10
-            print("nuevo best = "+str(best)+"% with alpha"+str(best_alpha))
+            print("nuevo best = "+str(best)+"% with alpha = "+str(best_alpha))
     print("Optimizacion de busqueda = "+str(best))
 
-    #Guardar 
+    extract(n_tipes_box, n_box, v_carga, v_contenedor,cantidad_box_type,dimension_box, optimizacion, best_alpha,best_beta,best_gamma,best_p, best,l,h,w)
+
+
+
+
+def extract(n_tipes_box,n_box,v_carga, v_contenedor,cantidad_box_type,dimension_box, optimizacion, best_alpha,best_beta,best_gamma,best_p,best,l,h,w):
+
+        #Guardar 
 
         #-Numero de cajas -> n_box
     suma = 0
@@ -109,25 +130,30 @@ def main():
         aux_med=[]
         for j in range(n_tipes_box):
             for k in range(cantidad_box_type[j]):
+
                 aux_med.append(dimension_box[j][i])
 
         media.append(float("{:2f}".format(np.mean(aux_med))))
+        
         #-Desviacion_l/l;h/h;w/w;
     desviacion = []
     for i in range(3):
         aux_desv=[]
         for j in range(n_tipes_box):
             for k in range(cantidad_box_type[j]):
+            
                 aux_desv.append(dimension_box[j][i])
 
-        desviacion.append(float("{:2f}".format(np.std(aux_med))))
+        desviacion.append(float("{:2f}".format(np.std(aux_desv))))
         #-Media_volumen/volumen
     volumen = []
     for j in range(n_tipes_box):
         for k in range(cantidad_box_type[j]):
             aux_v= (dimension_box[j][0] * dimension_box[j][1])
             aux_v = aux_v * dimension_box[j][2]
+           
             volumen.append(float("{:2f}".format(aux_v)))
+            
     desv_volumen = float("{:2f}".format(np.std(volumen)))
     media_volumen = float("{:2f}".format(np.mean(volumen)))
    #-Desviacion_volumen/volumen
@@ -140,17 +166,34 @@ def main():
 
 
 
-    archivo_instance = "Instance/out_BSG.txt";
+    archivo_instance = "Instance/out_BSG"+str(args.n)+".txt";
     with open(archivo_instance, 'a') as file:
-        file.write(str(optimizacion)+', ' + str(suma)+', '+str(n_tipes_box)+', '+str(relacion_volumen)+', '+str(media[0])+', '+str(media[1])+', '+str(media[2])+', '+str(desviacion[0])+', '+str(desviacion[1])+', '+str(desviacion[2])+', '+str(desv_volumen)+', '+str(media_volumen)+', '+str(best_alpha)+', '+str(best_beta)+', '+str(best_gamma)+', '+str(best_p)+', '+str(best)+"\n");
+        file.write(
+            str(optimizacion)+', ' + 
+            str(suma)+', '+
+            str(n_tipes_box)+', '+
+            str(relacion_volumen)+', '+
+            str(float("{:2f}".format(media[0]/l)))+', '+
+            str(float("{:2f}".format(media[1]/w)))+', '+
+            str(float("{:2f}".format(media[2]/h)))+', '+
+            str(float("{:2f}".format(desviacion[0]/l)))+', '+
+            str(float("{:2f}".format(desviacion[1]/w)))+', '+
+            str(float("{:2f}".format(desviacion[2]/h)))+', '+
+            str(float("{:2f}".format(desv_volumen/v_contenedor)))+', '+
+            str(float("{:2f}".format(media_volumen/v_contenedor)))+', '+
+            str(best_alpha)+', '+
+            str(best_beta)+', '+
+            str(best_gamma)+', '+
+            str(best_p)+', '+
+            str(best)+"\n");
     """
     - Optimizacion obtenida por el paper
     - Total de cajas
     - Numero de tipos de cajas
     - Relacion volumen Carga contenedor
-    - Media del largo de las cajas
-    - Media del ancho de las cajas
-    - Media del alto de las cajas
+    - Media del largo de las cajas/contenedor
+    - Media del ancho de las cajas/contenedor
+    - Media del alto de las cajas/contenedor
     - Descviacion del largo de las cajas
     - Descviacion del ancho de las cajas
     - Descviacion del alto de las cajas
@@ -161,6 +204,7 @@ def main():
 
     
     """
+
 
 
 if __name__ == '__main__':
