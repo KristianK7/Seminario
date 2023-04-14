@@ -2,9 +2,9 @@ import os
 import subprocess
 
 
-def get_optimo(alpha,betha,gamma,p):
+def get_optimo(alpha,betha,gamma,p,n):
     RutaSolver= "./Metasolver/BSG_CLP "
-    RutaInstance= "Instance/instance.txt "
+    RutaInstance= "Instance/instance"+n+".txt "
     tiempo= 1
     instance= 1
 
