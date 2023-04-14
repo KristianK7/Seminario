@@ -50,7 +50,7 @@ def main():
     op = OBSG.get_optimo(alpha_op, beta_op, gamma_op,p_op,str(args.n))
     print("optimo paper es: "+op)
     if float(op) < 75:
-        comand= "cp Instance/instance.txt Instance/Error/Error_"+str(args.i)+"_"+str(args.n)+".txt"
+        comand= "cp Instance/instance"+str(args.n)+".txt Instance/Error/Error_"+str(args.n)+"_"+str(args.i)+".txt"
         out = subprocess.getoutput(comand)
         
         archivo_log= "Instance/LOG_BSG.txt";
