@@ -47,7 +47,7 @@ def main():
 
     print("tipos de cajas:")
     print(n_tipes_box)
-    op = OBSG.get_optimo(alpha_op, beta_op, gamma_op,p_op)
+    op = OBSG.get_optimo(alpha_op, beta_op, gamma_op,p_op,str(args.n))
     print("optimo paper es: "+op)
     if float(op) < 75:
         comand= "cp Instance/instance.txt Instance/Error/Error_"+str(args.i)+"_"+str(args.n)+".txt"
@@ -66,7 +66,7 @@ def main():
     best_p = 0.0
     print("buscando mejor p: ")
     for i in range(p[0],p[1]):
-        optimizacion = OBSG.get_optimo(alpha_op,beta_op,gamma_op,i/100)
+        optimizacion = OBSG.get_optimo(alpha_op,beta_op,gamma_op,i/100,str(args.n))
         if float(optimizacion) > best:
             best = float(optimizacion)
             best_p = i/100
@@ -77,7 +77,7 @@ def main():
     best_gamma = 0.0
     print("buscando mejor gamma: ")
     for i in range(gamma[0],gamma[1]):
-        optimizacion = OBSG.get_optimo(alpha_op,beta_op,i/10,best_p)
+        optimizacion = OBSG.get_optimo(alpha_op,beta_op,i/10,best_p,str(args.n))
         if float(optimizacion) > best:
             best = float(optimizacion)
             best_gamma = i/10
@@ -88,7 +88,7 @@ def main():
     best_beta = 0.0
     print("buscando mejor beta: ")
     for i in range(beta[0],beta[1]):
-        optimizacion = OBSG.get_optimo(alpha_op,i/10,best_gamma,best_p)
+        optimizacion = OBSG.get_optimo(alpha_op,i/10,best_gamma,best_p,str(args.n))
         if float(optimizacion) > best:
             best = float(optimizacion)
             best_beta = i/10
@@ -99,7 +99,7 @@ def main():
     best_alpha = 0.0
     print("buscando mejor alpha: ")
     for i in range(alpha[0],alpha[1]):
-        optimizacion = OBSG.get_optimo(i/10,best_beta,best_gamma,best_p)
+        optimizacion = OBSG.get_optimo(i/10,best_beta,best_gamma,best_p,str(args.n))
         if float(optimizacion) > best:
             best = float(optimizacion)
             best_alpha = i/10
