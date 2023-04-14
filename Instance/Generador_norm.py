@@ -1,7 +1,7 @@
 import random
 import numpy as np
 
-def get_norm():
+def get_norm(process):
     n_casos=1
     caso=1
 
@@ -52,7 +52,7 @@ def get_norm():
     volumen_cargo = 0;
 
 
-    file = "Instance/instance.txt";
+    file = "Instance/instance_"+process+".txt";
 
     #abre el archivo para guardarlo
     with open(file, 'w') as file:
@@ -128,7 +128,7 @@ def get_norm():
             file.write(" "+str(cantidad_box_type[i])+"\n");
        
     #DataLog
-    logfile = "Instance/DataInstance/instance.txt";
+    logfile = "Instance/DataInstance/instance_"+process+".txt";
 
     #abre el archivo para guardarlo
     with open(logfile, 'a') as logfile:
@@ -141,4 +141,4 @@ def get_norm():
             logfile.write(" "+str(cantidad_box_type[i])+"\n"); 
         logfile.write("\n")  
 
-    return (dimension_box, cantidad_box_type,n,cantidad_box_type,tc,volumen_cargo)
+    return (dimension_box, cantidad_box_type,n,cantidad_box_type,tc,volumen_cargo,l,h,w)
